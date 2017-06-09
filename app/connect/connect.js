@@ -28,7 +28,6 @@ module.exports = class Connection {
 					return x + '=' + params[x];
 				});
 				request_url = trading_params[url_root_flag] + url_mark + '?' + k_v_pairs.join('&');
-				console.log(request_url);
 			}
 			request({
 				url: request_url

@@ -10,11 +10,12 @@
   "author": "Ziqi Hong",
   "license": "ISC",
   "dependencies": {
+    "async": "^2.4.1",
     "forever": "^0.15.3",
     "moment": "^2.18.1",
     "mongodb": "^2.2.27",
     "request": "^2.81.0",
-    "talib": "^1.0.2",
+    "talib": "^1.0.3",
     "urlencode": "^1.1.0",
     "xml2json": "^0.11.0"
   }

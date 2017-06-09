@@ -15,7 +15,12 @@ module.exports = class Trade {
 		}
 		this.conn.get('Trading_url', '/DealRequestAtBest', params, function(flag, body) {
 			if(flag){
-				cb(flag, body);
+				if(body.DealResponse.success) {
+					cb(flag, {executed_rate: parseFloat(body.DealResponse.rate)});
+					// cb(flag, body); //body.DealResponse.rate
+				}else{
+					cb(false, {error: 'Error deal at best'});
+				}
 			}else{
 				cb(false, {error: body.error});
 			}
@@ -48,7 +53,7 @@ module.exports = class Trade {
 				this.conn.get('Trading_url', '/PlaceOCOASSPOrder', params, function(flag, body) {
 					if(flag) {
 						if(body.BlotterOfPosition.Success) {
-							cb(flag, body);
+							cb(flag, {});
 						}else{
 							cb(false, {error: 'Error placing oco order!'});
 						}
@@ -58,5 +63,23 @@ module.exports = class Trade {
 				});
 			}
 		}
+	}
+
+
+	place_trade(token, buy_sell, amount, symbol, decimal, cb) {
+		var self = this;
+		self.deal_request_at_best(token, buy_sell, amount, symbol, function(flag, result) {
+			if(flag) {
+				self.place_oco_assp_order(token, buy_sell, amount, symbol, result.executed_rate, decimal, function(flag, next_result) {
+					if(flag) {
+						console.log("Trade placed!");
+						cb(flag, {});
+					}else{
+						cb(flag, {error: "Error in placing trades!"});
+					}
+				});
+				
+			}
+		})
 	}
 }
