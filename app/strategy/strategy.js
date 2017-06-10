@@ -4,6 +4,7 @@ var Authenticate = require('../authenticate/authenticate.js');
 var Analyze = require('../analyze/analyze.js');
 var Trade = require('../trade/trade.js');
 var Authenticate = require('../authenticate/authenticate.js');
+var Position = require('../position/position.js');
 var async = require('async');
 
 module.exports = class Strategy {
@@ -12,13 +13,13 @@ module.exports = class Strategy {
 		this.credential = new Authenticate();
 		this.analysis = new Analyze();
 		this.trade = new Trade();
+		this.position = new Position();
 		this.symbols_lst = Object.keys(trading_params.Symbols);
 	}
 
 	rsi_macd_strategy() {
 		var self = this;
 		for (var i = this.symbols_lst.length - 1; i >= 0; i--) {
-
 			async.waterfall([
 				function(cb) {
 					var symbol = self.symbols_lst[i];
@@ -39,46 +40,46 @@ module.exports = class Strategy {
 						var latest_macd_result = macd_result[macd_result.length - 1];
 						var latest_macd_result1 = macd_result[macd_result.length - 2];
 						var latest_rsi_result = macd_result[rsi_result.length - 1];
-
-						//Places trades here.
-						if(latest_rsi_result >  0 && latest_macd_result1 < 0 && latest_rsi_result >= 20) {
-							self.credential.get_token(function(flag, body) {
-								if(flag){
-									self.trade.place_trade(body.token, 'S', '100000', symbol, trading_params.Symbols[symbol].Decimal, function(final_flag, final_result) {
-										if(final_flag) {
-											console.log("Trade placed!");
-											cb(null, true);
+						self.credential.get_token(function(flag, body) {
+							if(flag) {
+								self.position.get_position_blotter_with_filter(body.token, symbol, function(pos_flag, pos_body) {
+									if(pos_flag) {
+										if(parseInt(pos_body.contract) == 0) {
+											//Places trades here.
+											if(latest_rsi_result >  0 && latest_macd_result1 < 0 && latest_rsi_result >= 20) {
+												self.trade.place_trade(body.token, 'S', '100000', symbol, trading_params.Symbols[symbol].Decimal, function(final_flag, final_result) {
+													if(final_flag) {
+														console.log("Trade placed!");
+														cb(null, true);
+													}else{
+														console.log(final_result.error);
+														cb(null, false);
+													}
+												});
+												
+											}else if(latest_rsi_result <  0 && latest_macd_result1 > 0 && latest_rsi_result <= 80){
+												self.trade.place_trade(body.token, 'B', '100000', symbol, trading_params.Symbols[symbol].Decimal, function(final_flag, final_result) {
+													if(final_flag) {
+														console.log("Trade placed!");
+														cb(null, true);
+													}else{
+														console.log(final_result.error);
+														cb(null, false);
+													}
+												});
+											}
 										}else{
-											console.log(final_result.error);
-											cb(null, false);
+											console.log("The position exists!");
 										}
-									});
-								}else{
-									console.log(body.error);
-									cb(null, false);
-								}
-								
-							});
-							
-						}else if(latest_rsi_result <  0 && latest_macd_result1 > 0 && latest_rsi_result <= 80){
-							self.credential.get_token(function(flag, body) {
-								if(flag){
-									self.trade.place_trade(body.token, 'B', '100000', symbol, trading_params.Symbols[symbol].Decimal, function(final_flag, final_result) {
-										if(final_flag) {
-											console.log("Trade placed!");
-											cb(null, true);
-										}else{
-											console.log(final_result.error);
-											cb(null, false);
-										}
-									});
-								}else{
-									console.log(body.error);
-									cb(null, false);
-								}
-							});
-						}
-
+									}else{
+										console.log("Error retrieving position");
+										console.log(body.error);
+									}
+								});
+							}else{
+								console.log("Error retrieving token!");
+							}
+						});
 					}else{
 						console.log("Error retrieving technical results!");
 						cb(null, false);

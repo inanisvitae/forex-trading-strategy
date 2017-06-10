@@ -1,12 +1,11 @@
 {
   "name": "roguestrategy",
   "version": "1.0.0",
-  "description": "",
+  "description": "A client for forex trading.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
-    "build": "npm install --save"
+    "start": "node index.js"
   },
   "author": "Ziqi Hong",
   "license": "ISC",
