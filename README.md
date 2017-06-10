@@ -1,6 +1,6 @@
 # A client in node.js for forex trading
 ## Build
-$ npm build
+$ npm install
 
 ## Start
 $ npm start
@@ -11,4 +11,3 @@ $ forever start index.js
 
 ### An updated version of api-trading
 forex.com
-##
