@@ -44,7 +44,6 @@ module.exports = class Analyze {
 	}
 	
 	_macd_calculate(marketData, cb) {
-		console.log(marketData.close);
         talib.execute({
             name: "MACD",
             startIdx: 0,

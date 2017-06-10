@@ -21,19 +21,18 @@ module.exports = class Strategy {
 
 			async.waterfall([
 				function(cb) {
-
-					self.analysis.macd_calculate(self.symbols_lst[i], function(flag, result) {
-						console.log(self.symbols_lst[i]);
-						cb(null, flag, result);
+					var symbol = self.symbols_lst[i];
+					self.analysis.macd_calculate(symbol, function(flag, result) {
+						cb(null, flag, result, symbol);
 					});
 				},
-				function(prev_flag, prev_result, cb) {
-					self.analysis.rsi_calculate(self.symbols_lst[i], function(flag, result) {
+				function(prev_flag, prev_result, symbol, cb) {
+					self.analysis.rsi_calculate(symbol, function(flag, result) {
 						prev_result.RSI = result;
-						cb(null, flag, prev_result);
+						cb(null, flag, prev_result, symbol);
 					});
 				},
-				function(prev_flag, prev_result, cb) {
+				function(prev_flag, prev_result, symbol, cb) {
 					if(prev_flag) {
 						var macd_result = prev_result.MACD.result.outMACDHist;
 						var rsi_result = prev_result.RSI.RSI.result;
@@ -45,7 +44,7 @@ module.exports = class Strategy {
 						if(latest_rsi_result >  0 && latest_macd_result1 < 0 && latest_rsi_result >= 20) {
 							self.credential.get_token(function(flag, body) {
 								if(flag){
-									self.trade.place_trade(body.token, 'S', '100000', self.symbols_lst[i], trading_params.Symbols[self.symbols_lst[i]].Decimal, function(final_flag, final_result) {
+									self.trade.place_trade(body.token, 'S', '100000', symbol, trading_params.Symbols[symbol].Decimal, function(final_flag, final_result) {
 										if(final_flag) {
 											console.log("Trade placed!");
 											cb(null, true);
@@ -64,7 +63,7 @@ module.exports = class Strategy {
 						}else if(latest_rsi_result <  0 && latest_macd_result1 > 0 && latest_rsi_result <= 80){
 							self.credential.get_token(function(flag, body) {
 								if(flag){
-									self.trade.place_trade(body.token, 'B', '100000', self.symbols_lst[i], trading_params.Symbols[self.symbols_lst[i]].Decimal, function(final_flag, final_result) {
+									self.trade.place_trade(body.token, 'B', '100000', symbol, trading_params.Symbols[symbol].Decimal, function(final_flag, final_result) {
 										if(final_flag) {
 											console.log("Trade placed!");
 											cb(null, true);

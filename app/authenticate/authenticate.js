@@ -9,7 +9,6 @@ module.exports = class Authenticate {
 	}
 
 	get_token(cb) {
-		console.log(trading_params.Authenticate_url)
 		var params = {
 			userID: trading_params.Username,
 			password: trading_params.Password
