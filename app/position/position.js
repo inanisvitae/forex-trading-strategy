@@ -21,7 +21,6 @@ module.exports = class Position{
 				}else{
 					cb(false, {error: 'Error retrieving position'});
 				}
-				
 			});
 		}
 	}

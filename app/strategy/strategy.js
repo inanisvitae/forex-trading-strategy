@@ -35,11 +35,20 @@ module.exports = class Strategy {
 				},
 				function(prev_flag, prev_result, symbol, cb) {
 					if(prev_flag) {
+						
 						var macd_result = prev_result.MACD.result.outMACDHist;
 						var rsi_result = prev_result.RSI.RSI.result;
 						var latest_macd_result = macd_result[macd_result.length - 1];
 						var latest_macd_result1 = macd_result[macd_result.length - 2];
 						var latest_rsi_result = macd_result[rsi_result.length - 1];
+
+						console.log("macd:");
+						console.log(latest_macd_result);
+						console.log(latest_rsi_result);
+						console.log("rsi:");
+						console.log(latest_rsi_result);
+						
+
 						self.credential.get_token(function(flag, body) {
 							if(flag) {
 								self.position.get_position_blotter_with_filter(body.token, symbol, function(pos_flag, pos_body) {

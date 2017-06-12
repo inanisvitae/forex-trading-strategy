@@ -1,3 +1,4 @@
+
 var Strategy = require('./app/strategy/strategy.js');
 
 var strategy = new Strategy();

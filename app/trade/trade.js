@@ -79,7 +79,9 @@ module.exports = class Trade {
 					}
 				});
 				
+			}else{
+				cb(false, {error: "Error placing deal!"});
 			}
-		})
+		});
 	}
 }
