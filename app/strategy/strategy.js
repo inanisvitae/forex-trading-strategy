@@ -57,6 +57,8 @@ module.exports = class Strategy {
 										if(parseInt(pos_body.contract) == 0) {
 											//Places trades here.
 											if(latest_rsi_result >  0 && latest_macd_result1 < 0 && latest_rsi_result >= 20) {
+												console.log("Chance detected!");
+												console.log(symbol);
 												self.trade.place_trade(body.token, 'S', '100000', symbol, trading_params.Symbols[symbol].Decimal, function(final_flag, final_result) {
 													if(final_flag) {
 														console.log("Trade placed!");
@@ -80,14 +82,17 @@ module.exports = class Strategy {
 											}
 										}else{
 											console.log("The position exists!");
+											cb(null, false);
 										}
 									}else{
 										console.log("Error retrieving position");
 										console.log(body.error);
+										cb(null, false);
 									}
 								});
 							}else{
 								console.log("Error retrieving token!");
+								cb(null, false);
 							}
 						});
 					}else{
