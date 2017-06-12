@@ -38,7 +38,6 @@ module.exports = class Strategy {
 						
 						var macd_result = prev_result.MACD.result.outMACDHist;
 						var rsi_result = prev_result.RSI.RSI.result.outReal;
-						// console.log(prev_result.RSI.RSI.result.outReal);
 						var latest_macd_result = macd_result[macd_result.length - 1];
 						var latest_macd_result1 = macd_result[macd_result.length - 2];
 						var latest_rsi_result = rsi_result[rsi_result.length - 1];

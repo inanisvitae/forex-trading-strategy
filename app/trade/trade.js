@@ -51,8 +51,9 @@ module.exports = class Trade {
 					StopRate: stopLoss.toString()
 				};
 				this.conn.get('Trading_url', '/PlaceOCOASSPOrder', params, function(flag, body) {
+					
 					if(flag) {
-						if(body.BlotterOfPosition.Success) {
+						if(body.OrderResponse.Success) {
 							cb(flag, {});
 						}else{
 							cb(false, {error: 'Error placing oco order!'});
