@@ -42,7 +42,11 @@ module.exports = class Strategy {
 						var latest_macd_result1 = macd_result[macd_result.length - 2];
 						var latest_rsi_result = rsi_result[rsi_result.length - 1];
 
+
+						var latest_macd_val = prev_result.MACD.result.outMACD[macd_result.length - 1];
+						var latest_macd_signal_val = prev_result.MACD.result.outMACDSignal[macd_result.length - 1];
 						console.log("macd:");
+						console.log(prev_result.MACD)
 						console.log(latest_macd_result);
 						console.log(latest_macd_result1);
 						console.log("rsi:");
@@ -55,10 +59,10 @@ module.exports = class Strategy {
 									if(pos_flag) {
 										if(parseInt(pos_body.contract) == 0) {
 											//Places trades here.
-											if(latest_rsi_result >  0 && latest_macd_result1 < 0 && latest_rsi_result >= 20) {
+											if(latest_rsi_result > 0 && latest_macd_result1 < 0 && latest_rsi_result >= 20 && latest_macd_val >=0 && latest_macd_signal_val >= 0) {
 												console.log("Chance detected!");
 												console.log(symbol);
-												self.trade.place_trade(body.token, 'S', '100000', symbol, trading_params.Symbols[symbol].Decimal, function(final_flag, final_result) {
+												self.trade.place_trade(body.token, 'S', '2000', symbol, trading_params.Symbols[symbol].Decimal, function(final_flag, final_result) {
 													if(final_flag) {
 														console.log("Trade placed!");
 														cb(null, true);
@@ -68,9 +72,10 @@ module.exports = class Strategy {
 													}
 												});
 												
-											}else if(latest_rsi_result <  0 && latest_macd_result1 > 0 && latest_rsi_result <= 80){
-												self.trade.place_trade(body.token, 'B', '100000', symbol, trading_params.Symbols[symbol].Decimal, function(final_flag, final_result) {
+											}else if(latest_rsi_result <  0 && latest_macd_result1 > 0 && latest_rsi_result <= 80 && latest_macd_val <=0 && latest_macd_signal_val <= 0){
+												self.trade.place_trade(body.token, 'B', '2000', symbol, trading_params.Symbols[symbol].Decimal, function(final_flag, final_result) {
 													if(final_flag) {
+														//Writes to database on cloud
 														console.log("Trade placed!");
 														cb(null, true);
 													}else{

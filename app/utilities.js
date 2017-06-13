@@ -7,4 +7,4 @@
 
 var moment = require('moment');
 moment().format();
-console.log(12 % 4)
+console.log(5 % 4)
