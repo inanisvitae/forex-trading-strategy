@@ -11,12 +11,12 @@ module.exports = class Analyze {
 		this.credential = new Authenticate();
 	}
 
-	macd_calculate(symbol, cb) {
+	macd_calculate(symbol, time_interval, cb) {
 		var self = this;
 		self.credential.get_token(function(flag, body) {
-			self.chart.get_chart(body.token, symbol, '50', function(flag, body) {
+			self.chart.get_chart(body.token, symbol, time_interval, '50', function(flag, body) {
 				var marketData = body.data;
-				self._macd_calculate(marketData, function(flag, result) {
+				self._macd_calculate(marketData, time_interval, function(flag, result) {
 					if(flag) {
 						cb(true, result);
 					}else{
@@ -27,12 +27,12 @@ module.exports = class Analyze {
 		});
 	}
 
-	rsi_calculate(symbol, cb) {
+	rsi_calculate(symbol, time_interval, cb) {
 		var self = this;
 		self.credential.get_token(function(flag, body) {
-			self.chart.get_chart(body.token, symbol, '50', function(flag, body) {
+			self.chart.get_chart(body.token, symbol, time_interval, '50', function(flag, body) {
 				var marketData = body.data;
-				self._rsi_calculate(marketData, function(flag, result) {
+				self._rsi_calculate(marketData, time_interval, function(flag, result) {
 					if(flag) {
 						cb(true, result);
 					}else{
@@ -43,7 +43,7 @@ module.exports = class Analyze {
 		});
 	}
 	
-	_macd_calculate(marketData, cb) {
+	_macd_calculate(marketData, timeInterval, cb) {
         talib.execute({
             name: "MACD",
             startIdx: 0,
@@ -56,12 +56,13 @@ module.exports = class Analyze {
         	if(error) {
         		cb(false, {error: 'MACD caculation error!'});
         	}else{
+        		result.timeInterval = timeInterval;
         		cb(true, {MACD: result});
         	}
         });
 	}
 
-	_rsi_calculate(marketData, cb) {
+	_rsi_calculate(marketData, timeInterval, cb) {
         talib.execute({
             name: "RSI",
             startIdx: 0,
@@ -72,6 +73,7 @@ module.exports = class Analyze {
         	if(error) {
         		cb(false, {error: 'RSI calculation error!'});
         	}else{
+        		result.timeInterval = timeInterval;
         		cb(true, {RSI: result});
         	}
             

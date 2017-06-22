@@ -6,11 +6,11 @@ module.exports = class Chart {
 		this.conn = new Connection();
 	}
 
-	get_chart(token, symbol, bars, cb) {
+	get_chart(token, symbol, time_interval, bars, cb) {
 		var params = {
 			Token : token,
 			Product: symbol,
-			TimeInterval: trading_params.Time_interval,
+			TimeInterval: time_interval,
 			Bars: bars
 		};
 		this.conn.get('Charting_url', '/GetChartsBlotterWithFixedBars', params, function(flag, body) {
